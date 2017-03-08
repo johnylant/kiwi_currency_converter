@@ -61,6 +61,7 @@ def handleInputs():
 
 
 
+# Gets json with currency rates
 def getCurrencyJson(input_currency):
     url = 'https://api.fixer.io/latest?base=' + input_currency
     response = requests.get(url)
@@ -68,7 +69,7 @@ def getCurrencyJson(input_currency):
         return 0
     return response.json()
 
-
+# Prepares output json
 def formatOutput(amount, input_currency):
     out_json = {}
     out_json['input'] = {}
@@ -77,7 +78,7 @@ def formatOutput(amount, input_currency):
     out_json['input']['currency'] = input_currency
     return out_json
 
-
+# Converts currencies and updates output json
 def convert(amount, output_currency, currency_json, out_json):
     if not output_currency:
         for key in currency_json['rates']:
