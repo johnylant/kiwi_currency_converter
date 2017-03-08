@@ -60,41 +60,56 @@ def handleInputs():
     return (amount, input_currency, output_currency)
 
 
-def convert(amount, output_currency, resp_json, out_json):
-    if not output_currency:
-        for key in resp_json['rates']:
-            out_json['output'][key] = round(amount * float(resp_json['rates'][key]), 4)
 
-    elif output_currency in resp_json['rates']:
-        out_json['output'][output_currency] = round(amount * float(resp_json['rates'][output_currency]), 4)
+def getCurrencyJson(input_currency):
+    url = 'https://api.fixer.io/latest?base=' + input_currency
+    response = requests.get(url)
+    if "error" in response.json():
+        return 0
+    return response.json()
+
+
+def formatOutput(amount, input_currency):
+    out_json = {}
+    out_json['input'] = {}
+    out_json['output'] = {}
+    out_json['input']['amount'] = amount
+    out_json['input']['currency'] = input_currency
+    return out_json
+
+
+def convert(amount, output_currency, currency_json, out_json):
+    if not output_currency:
+        for key in currency_json['rates']:
+            out_json['output'][key] = round(amount * float(currency_json['rates'][key]), 4)
+
+    elif output_currency in currency_json['rates']:
+        out_json['output'][output_currency] = round(amount * float(currency_json['rates'][output_currency]), 4)
     else:
-        print("You have entered invalid output currency")
         return 0
     return 1
+
 
 
 def main():
 
     try:
-        a, i, output_currency  = handleInputs()
+        amount, input_currency, output_currency  = handleInputs()
     except TypeError:
         return 0
 
-
-    out_json = {}
-    out_json['input'] = {}
-    out_json['output'] = {}
-
-    out_json['input']['amount'] = a
-    out_json['input']['currency'] = i
-    url = 'https://api.fixer.io/latest?base=' + i
-    response = requests.get(url)
-    if "error" in response.json():
+    currency_json = getCurrencyJson(input_currency)
+    if not currency_json:
         print("You have entered invalid input currency")
         return 0
 
+    out_json = formatOutput(amount, input_currency)
 
-    if convert(a, output_currency, response.json(), out_json):
+
+    if not convert(amount, output_currency, currency_json, out_json):
+        print("You have entered invalid output currency")
+        return 0
+    else:
         print(out_json)
 
 
