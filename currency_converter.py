@@ -106,7 +106,6 @@ def convert(amount, output_currency, currency_json, out_json):
 
 
 def main():
-
     try:
         # handleInputs returns inputs or 0
         amount, input_currency, output_currency  = handleInputs()
