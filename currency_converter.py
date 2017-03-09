@@ -1,7 +1,7 @@
 import argparse
 import requests
 
-def provideArguments():
+def provide_arguments():
     '''
     Sets up and returns arguments for the application
     '''
@@ -14,7 +14,7 @@ def provideArguments():
     return (args.amount, args.input_currency, args.output_currency)
 
 
-def checkCurrencyInput(currency):
+def check_currency_input(currency):
     '''
     Checks if specified string is currency symbol or triname
     '''
@@ -37,24 +37,24 @@ def checkCurrencyInput(currency):
     return currency
 
 
-def handleInputs():
+def handle_inputs():
     '''
     Checks provided inputs and returns them
     '''
     # Gather values from the input arugemnts
-    amount, input_currency, output_currency = provideArguments()
+    amount, input_currency, output_currency = provide_arguments()
     if amount <= 0:
         print("Invalid amount provided")
         return 0
     else:
         # Check input currency
-        input_currency = checkCurrencyInput(input_currency)
+        input_currency = check_currency_input(input_currency)
         if not input_currency:
             print("Input currency symbol not found or not triname entered")
             return 0
         # Check output currency (default is None)
         if output_currency:
-            output_currency = checkCurrencyInput(output_currency)
+            output_currency = check_currency_input(output_currency)
             if not output_currency:
                 print("Output currency symbol not found or not triname entered")
                 return 0
@@ -65,7 +65,7 @@ def handleInputs():
     return (amount, input_currency, output_currency)
 
 
-def getCurrencyJson(input_currency):
+def get_currency_json(input_currency):
     '''
     Gets json with currency rates using external API
     '''
@@ -76,7 +76,7 @@ def getCurrencyJson(input_currency):
     return response.json()
 
 
-def formatOutput(amount, input_currency):
+def format_output(amount, input_currency):
     '''
     Prepares output json
     '''
@@ -108,16 +108,16 @@ def convert(amount, output_currency, currency_json, out_json):
 def main():
     try:
         # handleInputs returns inputs or 0
-        amount, input_currency, output_currency  = handleInputs()
+        amount, input_currency, output_currency  = handle_inputs()
     except TypeError:
         return 0
 
-    currency_json = getCurrencyJson(input_currency)
+    currency_json = get_currency_json(input_currency)
     if not currency_json:
         print("You have entered invalid input currency")
         return 0
 
-    out_json = formatOutput(amount, input_currency)
+    out_json = format_output(amount, input_currency)
 
 
     if not convert(amount, output_currency, currency_json, out_json):
